@@ -2,23 +2,13 @@ fetch("http://localhost:3000/api/products")
     .then(res => res.json())
     .then((data) => addProducts(data))
 
-// altTxt: "Photo d'un canapé bleu, deux places"
-// colors: (3)['Blue', 'White', 'Black']
-// description: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-// imageUrl: "http://localhost:3000/images/kanap01.jpeg"
-// name: "Kanap Sinopé"
-// price: 1849
-// _id: "107fb5b75607497b96722bda5b504926"
-
-
 function addProducts(canaps) {
-    //const _id = canaps[0]._id
-    //const imageUrl = canaps[0].imageUrl
-    //const altTxt = canaps[0].altTxt
-    //const name = canaps[0].name
-    //const description = canaps[0].description
-
     canaps.forEach((canap) => {
+        //const _id = canap._id
+        //const imageUrl = canap.imageUrl
+        //const altTxt = canap.altTxt
+        //const name = canap.name
+        //const description = canap.description
         const {_id, imageUrl, altTxt, name, description} = canap
         const anchor = makeAnchor(_id)
         const article = document.createElement("article")
