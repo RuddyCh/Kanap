@@ -1,9 +1,6 @@
 fetch("http://localhost:3000/api/products")
     .then(res => res.json())
-    .then((data) => {
-        console.log(data)
-        return addProducts(data)
-    })
+    .then((data) => addProducts(data))
 
 // altTxt: "Photo d'un canapé bleu, deux places"
 // colors: (3)['Blue', 'White', 'Black']
@@ -14,23 +11,24 @@ fetch("http://localhost:3000/api/products")
 // _id: "107fb5b75607497b96722bda5b504926"
 
 
-function addProducts(data) {
-    //const _id = data[0]._id
-    //const imageUrl = data[0].imageUrl
-    //const altTxt = data[0].altTxt
-    //const name = data[0].name
-    //const description = data[0].description
-    const {_id, imageUrl, altTxt, name, description} = data[0]
+function addProducts(canaps) {
+    //const _id = canaps[0]._id
+    //const imageUrl = canaps[0].imageUrl
+    //const altTxt = canaps[0].altTxt
+    //const name = canaps[0].name
+    //const description = canaps[0].description
 
-    const anchor = makeAnchor(_id)
+    canaps.forEach((canap) => {
+        const {_id, imageUrl, altTxt, name, description} = canap
+        const anchor = makeAnchor(_id)
+        const article = document.createElement("article")
+        const image = makeImage(imageUrl, altTxt)
+        const h3 = makeH3(name)
+        const p = makeP(description)
 
-    const article = document.createElement("article")
-    const image = makeImage(imageUrl, altTxt)
-    const h3 = makeH3(name)
-    const p = makeP(description)
-
-    appendElementsToArticle(article, image, h3, p)
-    appendArticleToAnchor(anchor, article)
+        appendElementsToArticle(article, image, h3, p)
+        appendArticleToAnchor(anchor, article)
+    })
 }
 
 function appendElementsToArticle(article, image, h3, p) {
