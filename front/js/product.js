@@ -1,6 +1,10 @@
 const idUrl = window.location.search
 const searchParams = new URLSearchParams(idUrl)
 const id = searchParams.get("id")
+if (id != null) {
+    let itemPrice = 0
+    let itemTitle = 0
+}
 
 fetch(`http://localhost:3000/api/products/${id}`)
     .then((response) => response.json())
@@ -16,7 +20,9 @@ function canapInformation(canap) {
     const {altTxt, colors, description, imageUrl, name, price} = canap
     makeImage(imageUrl, altTxt)
     makeTitle(name)
+    itemTitle = name
     makePrice(price)
+    itemPrice = price
     makeDescription(description)
     makeColors(colors)
 }
@@ -56,3 +62,21 @@ function makeColors(colors) {
         });
     }
 }
+
+const addToCart = document.getElementById("addToCart")
+addToCart.addEventListener("click", (e) => {
+    const color = document.getElementById("colors").value
+    const quantity = document.getElementById("quantity").value
+    if (color == null || color === "" || quantity == null || quantity === "0") {
+        alert("Veuillez renseigner une couleur et une quantité avant d'ajouter au panier.")
+    }
+    const data = {
+        id: id,
+        color: color,
+        quantity: Number(quantity),
+        title: itemTitle,
+        price: itemPrice
+    }
+    localStorage.setItem(id, JSON.stringify(data))
+    window.location.href = "cart.html"
+})
