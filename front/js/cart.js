@@ -1,5 +1,4 @@
 const cart = []
-console.log(cart)
 retrieveItems()
 cart.forEach(item => displayItem(item))
 
@@ -28,6 +27,9 @@ function displayItem(item) {
     const cartItemContent = makeCartItemContent(item)
     article.appendChild(cartItemContent)
     displayArticle(article)
+
+    displayTotalQuantity()
+    displayTotalPrice()
 }
 
 function makeArticle(item) {
@@ -87,6 +89,7 @@ function makeSettings(item) {
     settings.classList.add("cart__item__content__settings")
 
     addQuantityToSettings(settings, item)
+    addDeleteToSettings(settings)
     return settings
 }
 
@@ -105,5 +108,49 @@ function addQuantityToSettings(settings, item) {
     input.min = "1"
     input.max = "100"
     input.value = item.quantity
-    settings.appendChild(input)
+    input.addEventListener("input", () => updatePriceAndQuantity(item.id, input.value, item))
+
+    quantity.appendChild(input)
+    settings.appendChild(quantity)
+
+}
+
+function updatePriceAndQuantity(id, newValue, item) {
+    const itemUpdate = cart.find(item => item.id === id)
+    itemUpdate.quantity = Number(newValue)
+    displayTotalQuantity()
+    displayTotalPrice()
+    saveNewDataToLocalStorage(item)
+}
+
+function saveNewDataToLocalStorage(item) {
+    const dataSave = JSON.stringify(item)
+    localStorage.setItem(item.id, dataSave)
+}
+
+function addDeleteToSettings(settings) {
+    const div = document.createElement("div")
+    div.classList.add("cart__item__content__settings__delete")
+
+    const p = document.createElement("p")
+    p.textContent = "Supprimer"
+    div.appendChild(p)
+    settings.appendChild(div)
+}
+
+function displayTotalQuantity() {
+    let total = 0
+    const totalQuantity = document.getElementById("totalQuantity")
+    cart.forEach(item => total = total + item.quantity)
+    totalQuantity.textContent = total
+}
+
+function displayTotalPrice() {
+    let total = 0
+    const totalPrice = document.getElementById("totalPrice")
+    cart.forEach(item => {
+        const totalItemPrice = item.price * item.quantity
+        total = total + totalItemPrice
+    })
+    totalPrice.textContent = total
 }
