@@ -2,6 +2,9 @@ const cart = []
 retrieveItems()
 cart.forEach(item => displayItem(item))
 
+const orderButton = document.querySelector("#order")
+orderButton.addEventListener("click", (e) => submitForm(e))
+
 // altTxt: "Photo d'un canapé gris, deux places"
 // color: "Navy"
 // id: "77711f0e466b4ddf953f677d30b0efc9"
@@ -89,7 +92,7 @@ function makeSettings(item) {
     settings.classList.add("cart__item__content__settings")
 
     addQuantityToSettings(settings, item)
-    addDeleteToSettings(settings)
+    addDeleteToSettings(settings, item)
     return settings
 }
 
@@ -118,6 +121,7 @@ function addQuantityToSettings(settings, item) {
 function updatePriceAndQuantity(id, newValue, item) {
     const itemUpdate = cart.find(item => item.id === id)
     itemUpdate.quantity = Number(newValue)
+    item.quantity = itemUpdate.quantity // pb //
     displayTotalQuantity()
     displayTotalPrice()
     saveNewDataToLocalStorage(item)
@@ -125,17 +129,40 @@ function updatePriceAndQuantity(id, newValue, item) {
 
 function saveNewDataToLocalStorage(item) {
     const dataSave = JSON.stringify(item)
-    localStorage.setItem(item.id, dataSave)
+    localStorage.setItem(`${item.id}-${item.color}`, dataSave) // pb //
 }
 
-function addDeleteToSettings(settings) {
+function addDeleteToSettings(settings, item) {
     const div = document.createElement("div")
     div.classList.add("cart__item__content__settings__delete")
+    
+    div.addEventListener("click", () => deleteItem(item))
 
     const p = document.createElement("p")
     p.textContent = "Supprimer"
     div.appendChild(p)
     settings.appendChild(div)
+}
+
+function deleteItem(item) {
+    const itemToDelete = cart.findIndex((product) => product.id === item.id && product.color === item.color)
+    cart.splice(itemToDelete, 1)
+    displayTotalPrice()
+    displayTotalQuantity()
+    deleteDataToLocalStorage(item)
+    deleteArticleFromPage(item)
+}
+
+function deleteDataToLocalStorage(item) {
+    const key = `${item.id}-${item.color}`
+    localStorage.removeItem(key)
+}
+
+function deleteArticleFromPage(item) {
+    const articleToDelete = document.querySelector(
+        `article[data-id="${item.id}"][data-color="${item.color}"]`
+    )
+    articleToDelete.remove()
 }
 
 function displayTotalQuantity() {
@@ -153,4 +180,85 @@ function displayTotalPrice() {
         total = total + totalItemPrice
     })
     totalPrice.textContent = total
+}
+
+function submitForm(e) {
+    e.preventDefault()
+    if (cart.length === 0) {
+        alert("Veuillez remplir le panier.")
+        return
+    }
+
+    if (validateForm()) return
+    if (validateEmail()) return
+
+    const body = makeRequestBody()
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            const orderId = data.orderId
+            window.location.href = "confirmation.html" + "?orderId=" + orderId
+            return console.log(data)
+        })
+        .catch((err) => console.log(err))
+}
+
+function validateForm() {
+    const form = document.querySelector(".cart__order__form")
+    const inputs = document.querySelectorAll("input")
+    inputs.forEach((input) => {
+        if (input.value === "") {
+            alert("Veuillez remplir tous les champs demandé.")
+            return true
+        }
+        return false
+    })
+}
+
+function validateEmail() {
+    const email = document.querySelector("#email").value
+    const regex = /^[A-Za-z0-9+_.-]+@(.+)$/
+    if (regex.test(email) === false) {
+        alert("Veuillez rensseigner un email valide.")
+        return true
+    }
+    return false
+}
+
+function makeRequestBody() {
+    const form = document.querySelector(".cart__order__form")
+    const firstName = form.elements.firstName.value
+    const lastName = form.elements.lastName.value
+    const address = form.elements.address.value
+    const city = form.elements.city.value
+    const email = form.elements.email.value
+    
+    const body = { 
+      contact: {
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        city: city,
+        email: email
+        },
+        products: getIdFromLocalStorage()
+    }
+    return body
+}
+
+function getIdFromLocalStorage() {
+    const numberOfProducts = localStorage.length
+    const ids = []
+    for (let i = 0; i < numberOfProducts; i++) {
+        const key = localStorage.key(i)
+        const id = key.split("-")[0]
+        ids.push(id)
+    }
+    return ids
 }

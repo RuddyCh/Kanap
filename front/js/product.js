@@ -83,7 +83,7 @@ addToCart.addEventListener("click", (e) => {
         imageUrl: itemImage,
         altTxt: itemAltTxt
     }
-    localStorage.setItem(id, JSON.stringify(data))
+    localStorage.setItem(`${id}-${color}`, JSON.stringify(data))
     window.location.href = "cart.html"
 })
 
