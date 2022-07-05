@@ -1,18 +1,11 @@
 const cart = []
 retrieveItems()
-cart.forEach(item => displayItem(item))
+cart.forEach(item => displayItem(item)) // Pour chaque éléments dans le cart, displayItem
 
 const orderButton = document.querySelector("#order")
 orderButton.addEventListener("click", (e) => submitForm(e))
 
-// altTxt: "Photo d'un canapé gris, deux places"
-// color: "Navy"
-// id: "77711f0e466b4ddf953f677d30b0efc9"
-// imageUrl: "http://localhost:3000/images/kanap06.jpeg"
-// price: 999
-// quantity: 2
-// title: "Kanap Hélicé"
-
+// loop qui recupere les éléments dans le localstorage
 function retrieveItems() {
     const numberOfItems = localStorage.length
     for (let i = 0; i < numberOfItems; i++) {
@@ -22,6 +15,7 @@ function retrieveItems() {
     }
 }
 
+// Fabrication global pour chaque item
 function displayItem(item) {
     const article = makeArticle(item)
     const imageDiv = makeImage(item)
@@ -35,6 +29,7 @@ function displayItem(item) {
     displayTotalPrice()
 }
 
+// fabrication article
 function makeArticle(item) {
     const article = document.createElement("article")
     article.classList.add("cart__item")
@@ -43,10 +38,12 @@ function makeArticle(item) {
     return article
 }
 
+// affichage article dans l'id cart__items
 function displayArticle(article) {
     document.getElementById("cart__items").appendChild(article)
 }
 
+// fabrication image
 function makeImage(item) {
     const div = document.createElement("div")
     div.classList.add("cart__item__img")
@@ -58,6 +55,7 @@ function makeImage(item) {
     return div
 }
 
+// fabrication global item content
 function makeCartItemContent(item) {
     const cartItemContent = document.createElement("div")
     cartItemContent.classList.add("cart__item__content")
@@ -70,6 +68,7 @@ function makeCartItemContent(item) {
     return cartItemContent
 }
 
+// fabrication description
 function makeDescription(item) {
     const description = document.createElement("div")
     description.classList.add("cart__item__content__description")
@@ -87,6 +86,7 @@ function makeDescription(item) {
     return description
 }
 
+// fabrication global content settings
 function makeSettings(item) {
     const settings = document.createElement("div")
     settings.classList.add("cart__item__content__settings")
@@ -96,6 +96,7 @@ function makeSettings(item) {
     return settings
 }
 
+// fabrication de l'input ou l'on pourra modifier la quantitée
 function addQuantityToSettings(settings, item) {
     const quantity = document.createElement("div")
     quantity.classList.add("cart__item__content__settings__quantity")
@@ -118,20 +119,23 @@ function addQuantityToSettings(settings, item) {
 
 }
 
+// update du prix selon la quantitée
 function updatePriceAndQuantity(id, newValue, item) {
     const itemUpdate = cart.find(item => item.id === id)
     itemUpdate.quantity = Number(newValue)
-    item.quantity = itemUpdate.quantity // pb //
+    item.quantity = itemUpdate.quantity
     displayTotalQuantity()
     displayTotalPrice()
     saveNewDataToLocalStorage(item)
 }
 
+// Sauvegarde des nouvelles données dans le local storage
 function saveNewDataToLocalStorage(item) {
     const dataSave = JSON.stringify(item)
-    localStorage.setItem(`${item.id}-${item.color}`, dataSave) // pb //
+    localStorage.setItem(`${item.id}-${item.color}`, dataSave)
 }
 
+// fabrication du p "Supprimer" avec ecoute lors d'un clic
 function addDeleteToSettings(settings, item) {
     const div = document.createElement("div")
     div.classList.add("cart__item__content__settings__delete")
@@ -144,6 +148,7 @@ function addDeleteToSettings(settings, item) {
     settings.appendChild(div)
 }
 
+// Suppression global lors du clic 
 function deleteItem(item) {
     const itemToDelete = cart.findIndex((product) => product.id === item.id && product.color === item.color)
     cart.splice(itemToDelete, 1)
@@ -153,11 +158,13 @@ function deleteItem(item) {
     deleteArticleFromPage(item)
 }
 
+// Supprime du localstorage
 function deleteDataToLocalStorage(item) {
     const key = `${item.id}-${item.color}`
     localStorage.removeItem(key)
 }
 
+// Supprime de la page
 function deleteArticleFromPage(item) {
     const articleToDelete = document.querySelector(
         `article[data-id="${item.id}"][data-color="${item.color}"]`
@@ -165,6 +172,7 @@ function deleteArticleFromPage(item) {
     articleToDelete.remove()
 }
 
+// Affichage de la quantitée global
 function displayTotalQuantity() {
     let total = 0
     const totalQuantity = document.getElementById("totalQuantity")
@@ -172,6 +180,7 @@ function displayTotalQuantity() {
     totalQuantity.textContent = total
 }
 
+// Affichage du prix global
 function displayTotalPrice() {
     let total = 0
     const totalPrice = document.getElementById("totalPrice")
@@ -182,10 +191,11 @@ function displayTotalPrice() {
     totalPrice.textContent = total
 }
 
+// fonction pour soumettre le formulaire
 function submitForm(e) {
     e.preventDefault()
     if (cart.length === 0) {
-        alert("Veuillez remplir le panier.")
+        alert("Veuillez remplir le panier.") // Si le panier est vide pop up d'alerte
         return
     }
 
@@ -204,11 +214,11 @@ function submitForm(e) {
         .then((data) => {
             const orderId = data.orderId
             window.location.href = "confirmation.html" + "?orderId=" + orderId
-            return console.log(data)
         })
-        .catch((err) => console.log(err))
+        .catch((err) => console.error(err))
 }
 
+// fonction de validation du formulaire
 function validateForm() {
     const form = document.querySelector(".cart__order__form")
     const inputs = document.querySelectorAll("input")
@@ -221,6 +231,7 @@ function validateForm() {
     })
 }
 
+// fonction de validation de l'email
 function validateEmail() {
     const email = document.querySelector("#email").value
     const regex = /^[A-Za-z0-9+_.-]+@(.+)$/
@@ -231,6 +242,7 @@ function validateEmail() {
     return false
 }
 
+// Récupère les éléments renseigné
 function makeRequestBody() {
     const form = document.querySelector(".cart__order__form")
     const firstName = form.elements.firstName.value
@@ -252,6 +264,7 @@ function makeRequestBody() {
     return body
 }
 
+// récupère l'id du localStorage
 function getIdFromLocalStorage() {
     const numberOfProducts = localStorage.length
     const ids = []

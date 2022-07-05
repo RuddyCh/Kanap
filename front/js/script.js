@@ -1,7 +1,9 @@
+// Récupération des données global
 fetch("http://localhost:3000/api/products")
     .then(res => res.json())
     .then((data) => addProducts(data))
 
+// Function récupération des données et creation article
 function addProducts(canaps) {
     canaps.forEach((canap) => {
         //const _id = canap._id
@@ -21,18 +23,21 @@ function addProducts(canaps) {
     })
 }
 
+// installation des éléments dans l'article
 function appendElementsToArticle(article, image, h3, p) {
     article.appendChild(image)
     article.appendChild(h3)
     article.appendChild(p)
 }
 
+// creation du lien de redirection vers product + id
 function makeAnchor(id) {
     const anchor = document.createElement("a")
     anchor.href = "./product.html?id=" + id
     return anchor
 }
 
+// insertion de l'article dans le a
 function appendArticleToAnchor(anchor, article) {
     const items = document.getElementById("items")
     if (items != null) {
@@ -41,6 +46,7 @@ function appendArticleToAnchor(anchor, article) {
     }
 }
 
+// creation de l'élément img
 function makeImage(imageUrl, altTxt) {
     const image = document.createElement("img")
     image.src = imageUrl
@@ -48,6 +54,7 @@ function makeImage(imageUrl, altTxt) {
     return image
 }
 
+// création du H3
 function makeH3(name) {
     const h3 = document.createElement("h3")
     h3.textContent = name
@@ -55,6 +62,7 @@ function makeH3(name) {
     return h3
 }
 
+// creation du paragraphe
 function makeP(description) {
     const p = document.createElement("p")
     p.textContent = description
