@@ -199,7 +199,7 @@ function submitForm(e) {
         return
     }
 
-    if (validateForm()) return
+//    if (validateForm()) return
     if (validateEmail()) return
 
     const body = makeRequestBody()
@@ -219,22 +219,132 @@ function submitForm(e) {
 }
 
 // fonction de validation du formulaire
-function validateForm() {
-    const form = document.querySelector(".cart__order__form")
-    const inputs = document.querySelectorAll("input")
-    inputs.forEach((input) => {
-        if (input.value === "") {
-            alert("Veuillez remplir tous les champs demandé.")
-            return true
-        }
-        return false
-    })
-}
+//function validateForm() {
+//    const form = document.querySelector(".cart__order__form")
+//    const inputs = document.querySelectorAll("input")
+//    inputs.forEach((input) => {
+//        if (input.value === "") {
+//            alert("Veuillez remplir tous les champs demandé.")
+//            return true
+//        }
+//        return false
+//    })
+//}
+
+// p error message
+const prenom = document.getElementById("firstName")
+const nom = document.getElementById("lastName")
+const adresse = document.getElementById("address")
+const ville = document.getElementById("city")
+
+let valuePrenom, valueNom, valueAdresse, valueVille;
+
+prenom.addEventListener("input", function (e) {
+    valuePrenom;
+    if (e.target.value.length == 0) {
+        firstNameErrorMsg.innerHTML = "";
+        valuePrenom = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 25){
+        firstNameErrorMsg.innerHTML = "Prenom doit contenir entre 3 et 25 caractères"
+        valuePrenom = null
+    }
+    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)){
+        firstNameErrorMsg.innerHTML = ""
+        valuePrenom = e.target.value
+    }
+    if (!e.target.value.match(/^[a-z A-Z]{3,25}$/) &&
+    e.target.value.length > 3 &&
+    e.target.value.length < 25){
+        firstNameErrorMsg.innerHTML = "Prenom ne doit pas contenir de caractères spécial, chiffre ou accent"
+        valuePrenom = null;
+    }
+})
+
+nom.addEventListener("input", function (e) {
+    valueNom;
+    if (e.target.value.length == 0) {
+        lastNameErrorMsg.innerHTML = "";
+        valueNom = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 25) {
+        lastNameErrorMsg.innerHTML = "Nom doit contenir entre 3 et 25 caractères"
+        valueNom = null
+    }
+    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
+        lastNameErrorMsg.innerHTML = ""
+        valueNom = e.target.value
+    }
+    if (!e.target.value.match(/^[a-z A-Z]{3,25}$/) &&
+        e.target.value.length > 3 &&
+        e.target.value.length < 25) {
+        lastNameErrorMsg.innerHTML = "Nom ne doit pas contenir de caractères spécial, chiffre ou accent"
+        valueNom = null;
+    }
+})
+
+adresse.addEventListener("input", function (e) {
+    valueAdresse;
+    if (e.target.value.length == 0) {
+        addressErrorMsg.innerHTML = "";
+        valueAdresse = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 50) {
+        addressErrorMsg.innerHTML = "Adresse doit contenir entre 3 et 50 caractères"
+        valueAdresse = null
+    }
+    if (e.target.value.match(/^[1-9]{1}[0-9]{0,3} [a-z A-Z]{3,50}$/)) {
+        addressErrorMsg.innerHTML = ""
+        valueAdresse = e.target.value
+    }
+    if (!e.target.value.match(/^[1-9]{1}[0-9]{0,3} [a-z A-Z]{3,50}$/) &&
+        e.target.value.length > 3 &&
+        e.target.value.length < 50) {
+        addressErrorMsg.innerHTML = "Adresse invalide"
+        valueAdresse = null;
+    }
+})
+
+ville.addEventListener("input", function (e) {
+    valueVille;
+    if (e.target.value.length == 0) {
+        cityErrorMsg.innerHTML = "";
+        valueVille = null;
+    }
+    else if (e.target.value.length < 3 || e.target.value.length > 25) {
+        cityErrorMsg.innerHTML = "Ville doit contenir entre 3 et 25 caractères"
+        valueVille = null
+    }
+    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)) {
+        cityErrorMsg.innerHTML = ""
+        valueVille = e.target.value
+    }
+    if (!e.target.value.match(/^[a-z A-Z]{3,25}$/) &&
+        e.target.value.length > 3 &&
+        e.target.value.length < 25) {
+        cityErrorMsg.innerHTML = "Ville ne doit pas contenir de caractères spécial, chiffre ou accent"
+        valueVille = null;
+    }
+})
+
+email.addEventListener("input" , (e) => {
+    if(e.target.value.length == 0){
+        emailErrorMsg.innerHTML = ""
+        valueEmail = null;
+    }
+    else if (e.target.value.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)){
+        emailErrorMsg.innerHTML = "";
+        valueEmail = e.target.value;
+    }
+    if (!e.target.value.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) && !e.target.value.length == 0){
+        emailErrorMsg.innerHTML = "Veuillez rensseigner un email valide. <br>  Exemple: jean@gmail.com";
+    }
+})
 
 // fonction de validation de l'email
 function validateEmail() {
     const email = document.querySelector("#email").value
-    const regex = /^[A-Za-z0-9+_.-]+@(.+)$/
+    const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
     if (regex.test(email) === false) {
         alert("Veuillez rensseigner un email valide.")
         return true
